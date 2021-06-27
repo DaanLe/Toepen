@@ -1,16 +1,10 @@
-from Deck import Deck
-from Game import Game
-from MCCFR import MCCFR
-from Infoset import Infoset
-from Play import Play
-from Heuristic import Heuristic
-from Abstraction_functions import simple, identity, naive, possible, advanced
 import wandb
-from Lisa import full_abstraction, abstraction_func, exploit
+from Experiment_functions import full_abstraction, abstraction_func, exploit
 import argparse
 
+"""This is the program, used for the MCCFR experiments."""
 
-# Default constants
+# Default parameters
 suits = 2
 ranks = 3
 hand_size = 2
@@ -18,11 +12,10 @@ bet = 0
 train_iterations = 40000
 intervals = 400
 eval_iterations = 10000
-# abstraction = "adv"
 FLAGS = None
 
-def main():
 
+def main():
     exploit(FLAGS.suits, FLAGS.ranks, FLAGS.hand_size, FLAGS.bet, FLAGS.train_iterations,
             FLAGS.intervals, FLAGS.eval_iterations)
 
@@ -31,14 +24,6 @@ if __name__ == '__main__':
 
     wandb.init(project='thesis', entity='daanle', group='exploit')
     config = wandb.config
-
-    # config.suits = suits
-    # config.ranks = ranks
-    # config.hand_size = hand_size
-    # config.bet = bet
-    # config.train_iterations = train_iterations
-    # config.intervals = intervals
-    # config.eval_iterations = eval_iterations
 
     # Command line arguments
     parser = argparse.ArgumentParser()
@@ -58,6 +43,5 @@ if __name__ == '__main__':
                         help='Number of iterations for evaluation')
     FLAGS, unparsed = parser.parse_known_args()
     config.update(FLAGS)
-
 
     main()

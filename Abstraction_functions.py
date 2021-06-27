@@ -1,12 +1,18 @@
 
 def identity(hand, hist, pos, mean):
+    """No abstraction"""
     return hand, hist
 
 
 def simple(hand, hist, pos, mean):
-    """Use only the hand"""
+    """Abstract away the entire history"""
     new_hist = ()
     return hand, new_hist
+
+
+def simple_hand(hand, hist, pos, mean):
+    """Abstract away the entire hand"""
+    return [], hist
 
 
 def naive(hand, hist, pos, mean):
@@ -24,6 +30,7 @@ def possible(hand, hist, pos, mean):
 
 
 def remove_bets(hist):
+    """A helper function which removes the betting actions from a history"""
     new_hist = ()
     for action in hist:
         if action not in ['Call', 'Check', 'Bet']:
@@ -31,17 +38,9 @@ def remove_bets(hist):
     return new_hist
 
 
-def change_hist(hand, hist):
-    new_hist = ()
-    for action in hist:
-        print('kaas')
-    return new_hist
-
-
 def advanced(hand, hist, pos, mean):
-    # react = True
-    # if len(hist) % 2 == 0:
-    #     react = False
+    """Advanced abstraction which replaces the hand with a list containing avg hand, number of suits and
+    number of high cards, and the history without betting order"""
 
     if len(hand) == 0:
         hand_str = 0
@@ -49,19 +48,17 @@ def advanced(hand, hist, pos, mean):
         hand_str = sum(map(lambda x: x[1], hand)) / len(hand)
 
     new_hist = remove_bets(hist) + (hist.count('Call'),)
-    # if ('Bet' or 'Call') in pos:
     suits = set()
     for card in hand:
         suits.add(card[0])
     high_cards = len([x for x in hand if x[1] > mean])
     new_hand = [hand_str, len(suits), high_cards]
-    # else:
-    #     new_hand = hand
 
     return new_hand, new_hist
 
 
 def adv_hist(hand, hist, pos, mean):
+    """Abstract away the betting order"""
 
     new_hist = remove_bets(hist) + (hist.count('Call'),)
 
@@ -69,23 +66,20 @@ def adv_hist(hand, hist, pos, mean):
 
 
 def adv_hand(hand, hist, pos, mean):
+    """Abstract away the hand to a list containing avg hand, number of suits and number of high cards,"""
 
     if len(hand) == 0:
         hand_str = 0
     else:
         hand_str = sum(map(lambda x: x[1], hand)) / len(hand)
 
-    # if ('Bet' or 'Call') in pos:
     suits = set()
     for card in hand:
         suits.add(card[0])
     high_cards = len([x for x in hand if x[1] > mean])
     new_hand = [hand_str, len(suits), high_cards]
-    # else:
-    #     new_hand = hand
 
     return new_hand, hist
 
 
-def simple_hand(hand, hist, pos, mean):
-    return [], hist
+

@@ -1,12 +1,13 @@
 from Infoset import Infoset
 import random
 import itertools
-import numpy as np
-from tqdm import tqdm
 
 
 class Heuristic:
+    """Class which can generate a strategy, using heuristic rules."""
+
     def __init__(self, game, abstraction_function, confidence):
+        """Initialize a game, a dictionary containing the strategy profile and an abstraction function and confidence."""
         self.game = game
         self.infoset_dict = {}
         self.abstraction_function = abstraction_function
@@ -14,12 +15,15 @@ class Heuristic:
         self.confidence = confidence
 
     def get_infoset(self, info_key):
-        """add if needed and return"""
+        """Create an infoset if needed and return."""
         if info_key not in self.infoset_dict:
             self.infoset_dict[info_key] = Infoset(info_key)
         return self.infoset_dict[info_key]
 
     def get_info_key(self, game_state):
+        """Function which generates an info_key, given a game_state. First the suits are abstracted using the
+                suit dict, after which the abstraction function is used for further abstraction."""
+
         possible_action = self.game.get_possible_actions(game_state)
         possible_action_len = len(possible_action)
         new_hand, new_hist = self.game.translate_suits(game_state)
@@ -28,6 +32,7 @@ class Heuristic:
         return key
 
     def avg_deck(self, game_state):
+        """Function which finds the average rank of the deck, without the cards that have been played"""
         deck = self.game.deck.deck2.copy()
         hand = game_state[1][game_state[0]]
         for action in game_state[2]:
@@ -50,7 +55,7 @@ class Heuristic:
                 return game_state[2][-1]
 
     def heuristic(self, game_state):
-        """Use this function to define your heuristic strat"""
+        """Recursive function which updates the infosets. Use this function to define your heuristic strat"""
         if game_state[3]:
             return game_state[4]
         possible_actions = self.game.get_possible_actions(game_state)
@@ -115,6 +120,7 @@ class Heuristic:
                 self.heuristic(self.game.get_next_game_state(game_state, action))
 
     def make_dict(self):
+        """Create the dict for all possible infosets."""
         for dealt_cards in itertools.combinations(self.game.deck.deck2, self.game.handsize * 2):
             for hand1 in itertools.combinations(dealt_cards, self.game.handsize):
                 hand2 = list(card for card in dealt_cards if card not in hand1)
@@ -123,6 +129,7 @@ class Heuristic:
                 self.heuristic(game_state)
 
     def count_infosets(self):
+        """Count total number of infosets in the dict."""
         p1_count = len([x for x, _ in self.infoset_dict.items() if x[0] == 0])
         p2_count = len(self.infoset_dict.items()) - p1_count
         return p1_count, p2_count

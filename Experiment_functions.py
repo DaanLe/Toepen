@@ -1,5 +1,4 @@
 from tqdm import tqdm
-import numpy as np
 from Deck import Deck
 from Game import Game
 from MCCFR import MCCFR
@@ -10,10 +9,11 @@ import wandb
 
 def exploit(suits, ranks, hand_size, bet, train_iterations, intervals, eval_iterations):
     """
+    Function to run the MCCFR experiment.
+    params:
     train_iterations: total number of iterations
-    interval: number of intevals for eval
+    interval: number of intervals for eval
     eval_iteration: number of iterations for each eval
-    runs: total number of runs
     """
     iterations_per_interval = int(train_iterations / intervals)
     deck = Deck(suits, ranks)
@@ -31,10 +31,11 @@ def exploit(suits, ranks, hand_size, bet, train_iterations, intervals, eval_iter
 
 def full_abstraction(suits, ranks, hand_size, bet, train_iterations, intervals, eval_iterations):
     """
+    Function to run the abstraction experiment using multiple abstraction methods.
+    params:
     train_iterations: total number of iterations
-    interval: number of intevals for eval
+    interval: number of intervals for eval
     eval_iteration: number of iterations for each eval
-    runs: total number of runs
     """
 
     iterations_per_interval = int(train_iterations / intervals)
@@ -103,10 +104,12 @@ def full_abstraction(suits, ranks, hand_size, bet, train_iterations, intervals, 
 
 def abstraction_func(suits, ranks, hand_size, bet, train_iterations, intervals, eval_iterations, abstraction):
     """
+    Function to run the abstraction experiment.
+    params:
     train_iterations: total number of iterations
-    interval: number of intevals for eval
+    interval: number of intervals for eval
     eval_iteration: number of iterations for each eval
-    runs: total number of runs
+    abstraction: the abstraction function
     """
 
     iterations_per_interval = int(train_iterations / intervals)

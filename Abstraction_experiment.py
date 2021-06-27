@@ -1,14 +1,9 @@
-from Deck import Deck
-from Game import Game
-from MCCFR import MCCFR
-from Infoset import Infoset
-from Play import Play
-from Heuristic import Heuristic
 from Abstraction_functions import simple, identity, naive, possible, advanced, adv_hand, adv_hist, simple_hand
 import wandb
-from Lisa import full_abstraction, abstraction_func
+from Experiment_functions import full_abstraction, abstraction_func
 import argparse
 
+"""This is the program, used for the Abstraction experiments."""
 
 # Default constants
 suits = 3
@@ -39,14 +34,6 @@ if __name__ == '__main__':
     wandb.init(project='thesis', entity='daanle', group='abstraction')
     config = wandb.config
 
-    # config.suits = suits
-    # config.ranks = ranks
-    # config.hand_size = hand_size
-    # config.bet = bet
-    # config.train_iterations = train_iterations
-    # config.intervals = intervals
-    # config.eval_iterations = eval_iterations
-
     # Command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--suits', type=int, default=suits,
@@ -67,6 +54,5 @@ if __name__ == '__main__':
                         help='Abstraction type')
     FLAGS, unparsed = parser.parse_known_args()
     config.update(FLAGS)
-
 
     main()

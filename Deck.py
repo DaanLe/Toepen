@@ -3,15 +3,13 @@ import random
 
 
 class Deck:
-    def __init__(self, suits, ranks):
-        # Initialize deck
-        # Args: len of each
+    """Class to determine the deck"""
 
-        #         self.suit = ('hearts','spades')
-        #         self.ranks = (7, 8, 9, 10)
+    def __init__(self, suits, ranks):
+        """Initialize a deck for a given number of ranks and suits."""
+
         self.suit = ('clubs', 'diamonds', 'hearts', 'spades')
         self.ranks = (10, 9, 8, 7, 6, 5, 4, 3)
-
         self.suit = self.suit[:suits]
         self.ranks = self.ranks[:ranks]
         self.deck1 = list(itertools.product(self.suit, self.ranks))
