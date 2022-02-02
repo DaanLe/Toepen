@@ -10,3 +10,9 @@
 /Plots/
 /.ipynb_checkpoints/
 /wandb/
+/mysite/*.pyc
+/mysite/*~
+/mysite/__pycache__
+/mysite/db.sqlite3
+/mysite//static
+/mysite/.DS_Store
