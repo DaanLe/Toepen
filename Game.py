@@ -117,8 +117,18 @@ class Game:
 
         elif self.bet == 1 and len(game_state[2]) % round_size == 2:
             return actions
-        else:
+
+        elif self.bet == 1:
             possible = [item for item in actions if item[0] == game_state[2][-1][0]]
+            if len(possible) == 0:
+                return actions
+            else:
+                return possible
+
+        elif self.bet == 2 and len(game_state[2]) % round_size == 2:
+            return actions
+        else:
+            possible = [item for item in actions if item[0] == game_state[2][-3][0]]
             if len(possible) == 0:
                 return actions
             else:

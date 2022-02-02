@@ -4,6 +4,7 @@ import random
 from copy import deepcopy
 import itertools
 from Infoset import Infoset
+import pickle
 
 
 class MCCFR:
@@ -258,3 +259,93 @@ class MCCFR:
         b_2 = self.evaluate()
         self.infoset_dict = deepcopy(info_dict_copy)
         return b_1 - b_2
+
+    def save_dict(self, name):
+        """Save information dict as pickle."""
+        a_file = open(f"Dicts/{name}.pkl", "wb")
+        pickle.dump(self.infoset_dict, a_file)
+        a_file.close()
+
+    def load_dict(self, name):
+        """Load information dict as pickle."""
+        a_file = open(f"Dicts/{name}.pkl", "rb")
+        output = pickle.load(a_file)
+        self.infoset_dict = output
+        self.infoset_data = (self.infoset_dict, self.abstraction_function)
+
+    def play_round(self, first_player, verbose):
+        """Recursive function for playing a round by sampling from the given infordict. And allowing the input to play.
+                first_player: info_dicts index for starting player"""
+        game_state = self.game.sample_new_game()
+        if verbose:
+            print(f"Your opponent's hand is: {game_state[1][(first_player + 1) % 2]}")
+            print('')
+        print(f"Your hand is: {game_state[1][first_player]} \n The history is {game_state[2]}", end='\r')
+        print('')
+        while not game_state[3]:
+            possible_actions = self.game.get_possible_actions(game_state)
+            if game_state[0] == first_player:
+                print(f"You have the following possible actions: {possible_actions}")
+                while True:
+                    try:
+                        index = int(input('Give the index of the action you want to choose (starting from 0): '))
+                    except ValueError:
+                        print("Sorry, you didn't provide a valid index starting from 0, try again.")
+                        continue
+                    if index > len(possible_actions)-1:
+                        print("Sorry, you didn't provide a valid index starting from 0, try again.")
+                        continue
+                    else:
+                        break
+                action = possible_actions[index]
+                game_state = self.game.get_next_game_state(game_state, action)
+
+            else:
+                if len(possible_actions) == 1:
+                    if verbose:
+                        print(f"Your opponent played the following action: {possible_actions[0]} as her only action")
+                    else:
+                        print(f"Your opponent played the following action: {possible_actions[0]}")
+
+                    game_state = self.game.get_next_game_state(game_state, possible_actions[0])
+
+                else:
+                    info_key = self.get_info_key(game_state)
+                    infoset = self.get_infoset(info_key)
+                    strategy = infoset.get_average_strategy()
+                    action = random.choices(possible_actions, strategy)[0]
+                    if verbose:
+                        print(f"Your opponent had the following possible actions: {possible_actions} with the "
+                              f"following probabilities: {strategy}")
+                        print(f"Your opponent played the following action: {action}")
+                    else:
+                        print(f"Your opponent played the following action: {action}")
+
+                    game_state = self.game.get_next_game_state(game_state, action)
+
+        sign_starting_player = (game_state[0] * -2) + 1
+        return sign_starting_player * game_state[4]
+
+    def play_game(self, winning_score, verbose=False):
+        """Play a first to 15game as a player against the generated strategy."""
+        score1 = 0
+        score2 = 0
+        i = 1
+        print("Initializing a new game...")
+        while score1 < winning_score and score2 < winning_score:
+            i = (i + 1) % 2
+            payoff = self.play_round(i, verbose)
+            print('')
+            if payoff * ((i * -2) + 1) < 0:
+                print(f"Your opponent won with an ante of {abs(payoff)}")
+                score2 += abs(payoff)
+            else:
+                print(f"You won with an ante of {abs(payoff)}")
+                score1 += abs(payoff)
+            print(f"The score is You: {score1}, Opponent: {score2}")
+            print('')
+        final = 'won'
+        if score2 > score1:
+            final = 'lost'
+        print(f"You {final} the match by {abs(score1 - score2)} points.")
+        return score1, score2
